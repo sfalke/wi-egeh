@@ -1,23 +1,62 @@
 import java.awt.Point;
 import java.util.Random;
 public class Main {
+
+    static Character player = new Character("Elrond",
+            "🧝🏻‍",
+            new Point(new Random().nextInt(20) + 1, new Random().nextInt(10) + 1));
+
+
     public static void main(String[] args) {
 
-//        Point player = new Point(3,4);
-//        Point treasure = new Point(5, 10);
-//        Point door = new Point(1,2);
-//        Point goblin = new Point(5, 9);
+        // Menü
+        byte chosen = 0;
+        do {
+            System.out.println("Willkommen in Governia");
+            System.out.println("Wähle Deinen nächsten Schritt!");
+            System.out.println("1 - Neues Spiel starten");
+            //System.out.println("2 - Spiel laden");
+            System.out.println("3 - Neuen Charakter erstellen");
+            System.out.println("4 - Spiel beenden");
 
-        Character player = new Character();
+            chosen = new java.util.Scanner(System.in).nextByte();
+
+            switch (chosen) {
+                case 1:
+                    System.out.println("Das neue Spiel startet jetzt!");
+                    startGame();
+                    break;
+                case 2:
+                    System.out.println("Spielstand wird geladen");
+                    break;
+                case 3:
+                    System.out.println("Erstelle jetzt deinen neuen Charakter");
+                    createPlayer();
+
+                    break;
+                case 4:
+                    System.out.println("Spiel wird beendet");
+                    break;
+                default:
+                    System.out.println("Falsche Eingabe! Versuche es noch einmal");
+            }
+        } while (chosen != 4);
+
+    }
+
+
+    public static void startGame(){
+
+
         Goblin goblin = new Goblin();
 
         Dragon dragon = new Dragon();
 
 
         // Spieler zufällig platzieren
-        player.setPosition(new Point(new Random().nextInt(20) + 1, new Random().nextInt(10) + 1));
-        player.setAvatar("🧝🏻‍");
-        player.setName("Elrond");
+        //player.setPosition(new Point(new Random().nextInt(20) + 1, new Random().nextInt(10) + 1));
+        //player.setAvatar("🧝🏻‍");
+        //player.setName("Elrond");
 
 
 
@@ -54,12 +93,12 @@ public class Main {
                 case 3 -> door.setLocation(new Point(1, new Random().nextInt(10) + 1));
                 case 4 -> door.setLocation(new Point(20, new Random().nextInt(10) + 1));
             }
-        } while (player.currentPosition(door) || treasure.equals(door) || goblin.equals(door));
+        } while (player.currentPosition(door) || treasure.equals(door) || goblin.currentPosition(door));
 
 
         boolean wall = false;
         //boolean hasFoundTreasure = false;
-        boolean isDeadGoblin = false;
+        //boolean isDeadGoblin = false;
         boolean playerstats = false;
 
         do {
@@ -75,15 +114,15 @@ public class Main {
                     } else if (y == door.y && x == door.x) {
                         System.out.print("🚪");
                     } else if (y == goblin.getPosition().y && x == goblin.getPosition().x){
-                        if (isDeadGoblin){
-                            System.out.print("💀");
-                        } else {
-                            System.out.print("👹");
-                        }
+                        //if (!goblin.isAlive()){
+                            System.out.print(goblin.getAvatar());
+                        //} else {
+                        //    System.out.print("👹");
+                        //}
                     } else if (y == dragon.getPosition().y && x == dragon.getPosition().x) {
                         System.out.print("🐉");
                     } else {
-                            System.out.print("⬛️");
+                        System.out.print("⬛️");
                     }
                 }
                 System.out.println();
@@ -113,17 +152,16 @@ public class Main {
                 return;
             }
 
-            if (player.currentPosition(goblin.getPosition())){
+            // Kampf Spieler Goblin
+            if (goblin.isAlive() && player.currentPosition(goblin.getPosition())){
                 if (player.getLevel() > goblin.getLevel()){
                     System.out.println("Es kommt zum Kampf! Der Goblin stirbt!");
                     player.levelUp();
-                    isDeadGoblin = true;
+                    goblin.dies();
                 } else {
                     System.out.println("Der Goblin gewinnt! Du stirbst!");
                     return;
                 }
-
-
             }
 
             if (playerstats){
@@ -171,13 +209,12 @@ public class Main {
                     playerstats = true;
                     break;
 
-
                 case "x":
                     return;
             }
 
             // Goblin bewegt sich auf Spieler zu
-            if (!isDeadGoblin && !playerstats) {
+            if (goblin.isAlive() && !playerstats) {
                 if (player.getPosition().x < goblin.getPosition().x) {
                     goblin.moveLeft();
                 } else if (player.getPosition().x > goblin.getPosition().x) {
@@ -197,6 +234,19 @@ public class Main {
 
 
 
+
+    }
+
+    public static void createPlayer(){
+        System.out.println("Bitte geben Sie einen Namen ein:");
+        String name = new java.util.Scanner(System.in).next();
+        System.out.println("Bitte geben Sie einen Avatar ein:");
+        String avatar = new java.util.Scanner(System.in).next();
+
+        player.setName(name);
+        player.setAvatar(avatar);
+
+        System.out.println("Vielen Dank! Dein Spieler wurde angelegt!");
 
     }
 }

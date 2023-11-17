@@ -1,26 +1,28 @@
 import java.awt.Point;
-public class Goblin {
+public class Goblin extends Monster {
 
-    private int level;
-    private Point position;
+    private boolean isAlive;
 
     public Goblin(){
-        this.level = 1;
-        this.position = new Point(0,0);
+        this.isAlive = true;
+        this.setName("Monsieur Goblin");
+        this.setAvatar("👹");
     }
 
-    public void setLevel(int level){ this.level = level; }
-    public int getLevel(){ return this.level; }
+    public void dies(){
+        this.isAlive = false;
+        this.setAvatar("💀");
+    }
 
-    public void setPosition(Point position){ this.position.setLocation(position); }
-    public Point getPosition(){ return this.position; }
+    public boolean isAlive(){
+        return this.isAlive;
+    }
 
-    public void moveUp(){ this.position.y--; }
-    public void moveDown(){ this.position.y++; }
-    public void moveLeft(){ this.position.x--; }
-    public void moveRight(){ this.position.x++; }
+    public int attack(){
+        // do something
+        return 1;
+    }
 
-    public boolean currentPosition(Point p){ return this.position.equals(p); }
 
 
 }
